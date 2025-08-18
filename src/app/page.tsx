@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Copy, Code, Globe, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Define types for the JSON structure
 interface WardData {
@@ -30,17 +31,17 @@ export default function HomePage() {
   // Public API key
   const PUBLIC_API_KEY = "keyPub1569gsvndc123kg9sjhg";
 
-  // Languages for examples
+  // Languages for examples with their respective icons
   const languages = [
-    "JavaScript",
-    "Node.js",
-    "TypeScript",
-    "Python",
-    "PHP",
-    "Java",
-    "C#",
-    "C++",
-    "Ruby",
+    { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+    { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+    { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+    { name: "Python", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+    { name: "PHP", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" },
+    { name: "Java", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
+    { name: "C#", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" },
+    { name: "C++", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" },
+    { name: "Ruby", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg" },
   ];
 
   // Load JSON from public/data/areas.json
@@ -86,7 +87,9 @@ export default function HomePage() {
   // Get code snippet based on selected language
   const getCodeSnippet = () => {
     const baseUrl = "https://kenyaareadata.vercel.app/api/areas";
-    switch (selectedLanguage) {
+    const selectedLangName = languages.find(lang => lang.name === selectedLanguage)?.name || "JavaScript";
+    
+    switch (selectedLangName) {
       case "JavaScript":
         return `fetch('${baseUrl}?apiKey=${PUBLIC_API_KEY}&county=Mombasa')
   .then(response => response.json())
@@ -220,7 +223,7 @@ puts data`;
           <div className="flex justify-center items-center gap-4">
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition duration-300 text-xs font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition duration-300 text-xs font-medium cursor-pointer"
             >
               <Copy className="w-4 h-4" />
               {apiKeyCopied ? "Copied!" : "Copy Public API Key"}
@@ -347,15 +350,23 @@ puts data`;
             <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto py-2">
               {languages.map((lang) => (
                 <button
-                  key={lang}
-                  onClick={() => setSelectedLanguage(lang)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition whitespace-nowrap ${
-                    selectedLanguage === lang
+                  key={lang.name}
+                  onClick={() => setSelectedLanguage(lang.name)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition whitespace-nowrap flex items-center gap-1 ${
+                    selectedLanguage === lang.name
                       ? "bg-indigo-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  {lang}
+                  <Image 
+                    src={lang.icon} 
+                    alt={lang.name} 
+                    width={16} 
+                    height={16} 
+                    className="w-4 h-4"
+                    unoptimized // Since these are SVGs from a CDN
+                  />
+                  {lang.name}
                 </button>
               ))}
             </div>
@@ -404,6 +415,13 @@ puts data`;
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 py-6 px-4 text-center text-gray-600 text-xs">
+        <div className="max-w-5xl mx-auto">
+          <p>© {new Date().getFullYear()} Kenya Area Data API. Created by <a href="https://josephmuindi.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">JosephMuindi</a></p>
+        </div>
+      </footer>
     </main>
   );
 }
